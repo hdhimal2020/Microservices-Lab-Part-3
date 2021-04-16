@@ -85,8 +85,8 @@ function fetchOneProduct($id) {
                 '                    </div>\n' +
                 '                    <div class="details col-md-6">\n' +
                 '                        <h3 class="product-title" style="margin-top: 10px">'+data['data']['List'][0]['title'].substring(0,15)+'...'+'</h3>\n' +
-                '                        <div class="rating">\n' +
-                '                            <button class="btn btn-info" id="comment" onclick="fetchComments('+data['data']['List'][0]['id']+')">'+data['data']['List'][0]['comment_count']+' comments</button>\n' +
+                '                        <div class="rating">\n' + 
+                '                           <button class="btn btn-info" id="comment" onclick="fetchComments('+data['data']['List'][0]['id']+')">'+data['data']['List'][0]['comment_count']+' comments</button>\n' +
                 '                        </div>\n' +
                 '                        <p class="product-description">'+data['data']['List'][0]['title']+'</p>\n' +
                 '                        <h5 class="price">Current Price: <span>'+data['data']['List'][0]['price']+'</span></h5>\n' +
@@ -262,11 +262,14 @@ function fetchReview() {
         dataType: 'json', //dataType, which is json for this lab.
         contentType: 'text/plain', //contentType, which is text/plain since json is sent as plain text.
         data: jsonObj[0], //data to be sent
+        
+
 
         success: function (data) { //on success calls this functions and passes the API response as the data parameter.
             productList='';
 
             $.each(data['data']['List'], function(i, item) {
+              
 
                 //this is HTML code that is reactively added to the page, your TODO solutions do not need this.
                 productListAdd = '<div class="col-sm-6 col-md-4 col-lg-3 mt-4" id="product'+item['id']+'">\n' +
@@ -281,18 +284,57 @@ function fetchReview() {
                     '                    </div>\n' +
                     '                </div>\n' +
                     '                <div class="card-footer">\n' +
-                    '                    <small>More information ...</small>\n' +
-                    '                    <button class="btn btn-info float-right btn-sm" onclick="fetchOneProduct('+item['id']+')">Detail</button>\n' +
-                    '                </div>\n' +                   
+                    '                    <button class="btn btn-info btn-sm" id="comment" onclick="fetchComment('+item['id']+')">See Comments</button>\n' +
+                    '                </div>\n' +
                     '            </div>\n' +
                     '        </div>';
                 productList=productList+productListAdd;
-
+                
             });
             $('#items').html(productList);
 
         },
         error: function (data) { //on error, alert the user.
+            alert("Error while fetching data.");
+        }
+
+    });
+}
+
+function fetchComment($id) {
+    var product;
+
+    //jQuery Ajax request
+    $.ajax({
+        url: Url+'GetOneProduct', //API url
+        type: 'get',
+        dataType: 'json', //dataType, which is json for this lab.
+        data: {"product_id":$id}, //the json is defined here using javascript's dictionary syntax.
+        contentType: 'text/plain',
+        success: function (data) {
+            product='';
+
+            product = '<div class="card justify-content-center pagination-centered" style="width:900px; height:auto">\n' +
+                '            <div class="container-fliud">\n' +
+                '                <div class="wrapper row">\n' +
+                '                    <div class="preview col-md-6">\n' +
+                '                        <div class="preview-pic tab-content">\n' +
+                '                            <div class="tab-pane active" id="pic-1"><img src="'+data['data']['List'][0]['image']+'" /></div>\n' +
+                '                        </div>\n' +
+                '                    </div>\n' +
+                '                    <div class="details col-md-6">\n' +
+                '                        <h3 class="product-title" style="margin-top: 10px">'+data['data']['List'][0]['title'].substring(0,15)+'...'+'</h3>\n' +
+                '                        <div class="rating">\n' + 
+                '                           <button class="btn btn-info" id="comment" onclick="fetchComments('+data['data']['List'][0]['id']+')">'+data['data']['List'][0]['comment_count']+' comments</button>\n' +
+                '                        </div>\n' +
+                '                    </div>\n' +
+                '                </div>\n' +
+                '            </div>\n' +
+                '        </div>';
+            $('#items').html(product);
+
+        },
+        error: function (data) {
             alert("Error while fetching data.");
         }
 
