@@ -88,3 +88,52 @@ function checkOut() {
         }
     });
 }
+
+function removeAll() {
+    var cartItems = [];
+
+    // get cart items first
+    $.ajax({
+        url: Url+'GetCart',
+        type: 'get',
+        dataType: 'json',
+        data: { 'email': email },
+        contentType: 'json',
+
+        success: function (data) {
+            cartItems = data.data.List;
+
+            console.log(cartItems); 
+
+            // after receiving cart items, looping thorugh each itmes and making a delete api call
+            $.each( cartItems, function( key, value ) {
+                $.ajax({
+                    url: Url+'Cart/'+`${value.id}`,
+                    type: 'delete',
+                    contentType: 'json',
+            
+                    success: function (data) {
+                       
+                    },
+                    error: function (data) {
+                        alert(value.title + " not able to removed from the shopping cart");
+                        console.error(err);
+                    }
+                });
+
+                getCart(email);
+
+          });
+
+          alert("Items are removed from the shopping cart");
+
+        },
+        error: function (data) {
+            alert("Error while checking out.");
+            console.error(err);
+        }
+    });
+
+    
+
+}
